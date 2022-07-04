@@ -1,7 +1,7 @@
 import { randomBytes, pbkdf2Sync, BinaryLike } from "crypto";
 
 function gererateSalt(): string {
-    const hashSalt = randomBytes(48).toString('hex');
+    const hashSalt = randomBytes(20).toString('hex');
     return hashSalt;
 }
 
