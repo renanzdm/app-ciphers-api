@@ -6,6 +6,7 @@ import * as Sentry from "@sentry/node";
 import "@sentry/tracing";
 const routes = Router();
 Sentry.init({
+  dsn: "https://d4b9df43317f437c9e671197f36951a3@o1128671.ingest.sentry.io/6551437",
   tracesSampleRate: 1.0,
 });
 
