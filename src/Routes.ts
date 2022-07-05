@@ -18,7 +18,7 @@ routes.route('/signup').post(
 
     try {
       const { TBL_USERS } = await client.request(
-        gql`query MyQuery($emil: String!) {
+        gql`query MyQuery($email: String!) {
           TBL_USERS(where: {user_email: {_eq: $email}}) {
             user_email
           }
