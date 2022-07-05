@@ -8,19 +8,19 @@ const routes = Router();
 
 routes.route('/signup').post(
   async (request: Request, response: Response) => {
-    // const { email, password, name } = request.body.input;
-    // const saltHash = await bcrypt.genSalt(10);
-    // const hashedPass = await bcrypt.hash(password, saltHash);
-    // const { TBL_USERS } = await client.request(
-    //   gql`query MyQuery($email: String!) {
-    //     TBL_USERS(where: {user_email: {_eq: $email}}) {
-    //       user_email
-    //     }
-    //   }
-    //   `, {
-    //   "email": email
-    // }
-    // );
+    const { email, password, name } = request.body.input;
+    const saltHash = await bcrypt.genSalt(10);
+    const hashedPass = await bcrypt.hash(password, saltHash);
+    const { TBL_USERS } = await client.request(
+      gql`query MyQuery($email: String!) {
+        TBL_USERS(where: {user_email: {_eq: $email}}) {
+          user_email
+        }
+      }
+      `, {
+      "email": email
+    }
+    );
 
     // if (TBL_USERS.length > 0) {
     //   return response.status(402).send({
