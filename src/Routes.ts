@@ -2,9 +2,12 @@ import { Router, Request, Response, urlencoded } from "express";
 import * as bcrypt from 'bcryptjs';
 import { client } from "./GraphQlClient";
 import { gql } from "graphql-request";
+import * as Sentry from "@sentry/node";
+import "@sentry/tracing";
 const routes = Router();
-
-
+Sentry.init({
+  tracesSampleRate: 1.0,
+});
 
 routes.route('/signup').post(
   async (request: Request, response: Response) => {
@@ -49,7 +52,8 @@ routes.route('/signup').post(
       });
     
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error);
+
       
     }
   }
@@ -59,41 +63,49 @@ routes.route('/signup').post(
 routes.route('/sign').post(
   async (request: Request, response: Response) => {
     const { email, password } = request.body.input;
-    const { TBL_USERS } = await client.request(
-      gql`query MyQuery($email: String!) {
-        TBL_USERS(where: {user_email: {_eq: $email}}) {
-          user_email
-          user_password
+    try {
+      const { TBL_USERS } = await client.request(
+        gql`query MyQuery($email: String!) {
+          TBL_USERS(where: {user_email: {_eq: $email}}) {
+            user_email
+            user_password
+          }
+        }`,
+        {
+          "email": email
         }
-      }`,
-      {
-        "email": email
-      }
-    );
-    if (TBL_USERS[0] != null) {
-      const { user_email, user_password } = TBL_USERS[0];
-      if (user_email == null) {
+      );
+      if (TBL_USERS[0] != null) {
+        const { user_email, user_password } = TBL_USERS[0];
+        if (user_email == null) {
+          return response.status(400).send({
+            "message": 'Usuario nao encontrado'
+          });
+        }
+        const isEqualsPass = await bcrypt.compare(password, user_password);
+        if (isEqualsPass) {
+          return response.status(200).send({
+            "token": user_email
+          });
+        } else {
+          return response.status(403).send({
+            "message": 'Senha invalida'
+          });
+        }
+      } else {
+  
         return response.status(400).send({
           "message": 'Usuario nao encontrado'
         });
+  
       }
-      const isEqualsPass = await bcrypt.compare(password, user_password);
-      if (isEqualsPass) {
-        return response.status(200).send({
-          "token": user_email
-        });
-      } else {
-        return response.status(403).send({
-          "message": 'Senha invalida'
-        });
-      }
-    } else {
-
-      return response.status(400).send({
-        "message": 'Usuario nao encontrado'
-      });
+    } catch (error) {
+      Sentry.captureException(error);
 
     }
+
+
+   
 
   }
 );
