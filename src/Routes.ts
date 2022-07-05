@@ -1,5 +1,5 @@
 import { Router, Request, Response, urlencoded } from "express";
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { client } from "./GraphQlClient";
 import { gql } from "graphql-request";
 const routes = Router();

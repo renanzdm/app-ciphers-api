@@ -1,0 +1,14 @@
+version: '3'
+services:
+  app:
+   build: .
+   container_name: "api-ciphers"
+   command: sh -c "npm run start"
+   ports:
+     - 3000:3000
+   volumes:
+     - .:/usr/app
+   environment:
+     HASURA_URL: ${HASURA-URL}
+     X_HASURA_ADMIN: ${X-HASURA-ADMIN}
+     
