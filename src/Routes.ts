@@ -30,8 +30,8 @@ routes.route('/signup').post(
        } 
   
        const { insert_TBL_USERS } = await client.request(
-         gql`mutation MyMutation($user_email:String!,$user_name:String! $user_password:String!,$user_salt:String!) {
-         insert_TBL_USERS(objects: {user_email: $user_email, user_name: $user_name, user_password: $user_password, user_salt: $user_salt}) {
+         gql`mutation MyMutation($user_email:String!,$user_name:String! $user_password:String!) {
+         insert_TBL_USERS(objects: {user_email: $user_email, user_name: $user_name, user_password: $user_password}) {
            returning {
              user_id
              user_email
@@ -39,7 +39,7 @@ routes.route('/signup').post(
          }
        }`,
          {
-           "user_email": email, "user_password": hashedPass, "user_salt": saltHash, "user_name": name
+           "user_email": email, "user_password": hashedPass, "user_name": name
          }
        );
        const { user_id, user_email } = insert_TBL_USERS['returning'][0];
